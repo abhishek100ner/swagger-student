@@ -1,31 +1,26 @@
 class Api::V1::StudentsController < Api::V1::ApiController
   before_action :authenticate_user!
+  before_action :set_semester
   before_action :set_student, only: [:show, :update, :destroy]
 
-  # GET /api/v1/students
   def index
-    @students = Student.all
-
+    @students = current_user.students.where(semester_id: @semester.id)
     render json: @students
   end
 
-  # GET /api/v1/students/1
   def show
     render json: @student
   end
 
-  # POST /api/v1/students
   def create
-    @student = Student.new(student_params)
-
+    @student = @semester.students.new(student_params.merge(user_id: current_user.id))
     if @student.save
-      render json: @student, status: :created, location: @student
+      render json: @student, status: :created
     else
       render json: @student.errors, status: :unprocessable_entity
     end
   end
 
-  # PATCH/PUT /api/v1/students/1
   def update
     if @student.update(student_params)
       render json: @student
@@ -34,19 +29,21 @@ class Api::V1::StudentsController < Api::V1::ApiController
     end
   end
 
-  # DELETE /api/v1/students/1
   def destroy
     @student.destroy
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
+    
     def set_student
-      @student = Student.find(params[:id])
+      @student = @semester.students.find(params[:id])
     end
 
-    # Only allow a trusted parameter "white list" through.
+    def set_semester
+      @semester = current_user.semesters.find(params[:semester_id])
+    end
+
     def student_params
-      params.fetch(:student, {})
+      params.require(:student).permit(:name, :description, :dob)
     end
 end
