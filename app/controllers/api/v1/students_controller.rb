@@ -1,4 +1,4 @@
-class Api::V1::StudentsController < Api::V1::ApiController
+class Api::V1::StudentsController < ApplicationController
   before_action :authenticate_user!
   before_action :set_semester
   before_action :set_student, only: [:show, :update, :destroy]
@@ -44,6 +44,6 @@ class Api::V1::StudentsController < Api::V1::ApiController
     end
 
     def student_params
-      params.require(:student).permit(:name, :description, :dob)
+      params.require(:student).permit(:name, :description, :dob, :age)
     end
 end

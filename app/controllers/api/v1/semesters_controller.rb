@@ -1,4 +1,4 @@
-class Api::V1::SemestersController < Api::V1::ApiController
+class Api::V1::SemestersController < ApplicationController
   before_action :authenticate_user!
   before_action :set_semester, only: [:show, :update, :destroy]
 
